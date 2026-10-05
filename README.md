@@ -170,7 +170,8 @@ as a Tomcat web service on Render.
 The database must be hosted separately because Render's free web service does not
 provide a free MySQL database. Never commit database credentials to the repository.
 The container uses Render's automatically provided `PORT` value, binds Tomcat to
-`0.0.0.0`, and defaults to port `8080` when run locally.
+`0.0.0.0`, disables Tomcat's shutdown listener, and defaults to port `8080` when
+run locally. Render's default port is advertised as `10000`.
 
 ---
 
