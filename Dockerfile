@@ -12,7 +12,6 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT
 COPY --from=build /app/target/SkillForge.war /usr/local/tomcat/webapps/ROOT.war
 
 ENV PORT=8080
-EXPOSE 8080
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
