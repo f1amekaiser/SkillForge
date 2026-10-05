@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skills>
+    <skill>
+        <id>1</id>
+        <name>Java &amp; Servlets Architecture</name>
+        <category>Web &amp; App Development</category>
+        <experience>Senior Student / 2+ Years</experience>
+        <demand>High</demand>
+    </skill>
+    <skill>
+        <id>2</id>
+        <name>React &amp; Modern Frontend</name>
+        <category>Web &amp; App Development</category>
+        <experience>Undergrad Specialist / 1.5 Years</experience>
+        <demand>Very High</demand>
+    </skill>
+    <skill>
+        <id>3</id>
+        <name>MySQL &amp; JDBC Database Design</name>
+        <category>Web &amp; App Development</category>
+        <experience>Intermediate / 2 Years</experience>
+        <demand>High</demand>
+    </skill>
+    <skill>
+        <id>4</id>
+        <name>Figma UI/UX &amp; Design Systems</name>
+        <category>Graphic &amp; UI/UX Design</category>
+        <experience>Senior Undergrad / 2+ Years</experience>
+        <demand>Very High</demand>
+    </skill>
+    <skill>
+        <id>5</id>
+        <name>Brand Identity &amp; Vector Logo</name>
+        <category>Graphic &amp; UI/UX Design</category>
+        <experience>Design Student / 2 Years</experience>
+        <demand>Medium</demand>
+    </skill>
+    <skill>
+        <id>6</id>
+        <name>YouTube Video &amp; B-Roll Editing</name>
+        <category>Video &amp; Media Editing</category>
+        <experience>Multimedia Major / 3 Years</experience>
+        <demand>Very High</demand>
+    </skill>
+    <skill>
+        <id>7</id>
+        <name>Instagram Reels &amp; Motion Graphics</name>
+        <category>Video &amp; Media Editing</category>
+        <experience>Content Creator / 1.5 Years</experience>
+        <demand>Very High</demand>
+    </skill>
+    <skill>
+        <id>8</id>
+        <name>Python Automation &amp; Web Scraping</name>
+        <category>AI &amp; Data Science</category>
+        <experience>CS Undergrad / 2 Years</experience>
+        <demand>High</demand>
+    </skill>
+    <skill>
+        <id>9</id>
+        <name>Machine Learning &amp; NLP Pipelines</name>
+        <category>AI &amp; Data Science</category>
+        <experience>Honors Researcher / 2 Years</experience>
+        <demand>Very High</demand>
+    </skill>
+    <skill>
+        <id>10</id>
+        <name>ATS-Compliant Resume &amp; CV Design</name>
+        <category>Content &amp; Tutoring</category>
+        <experience>Senior Mentor / 3 Years</experience>
+        <demand>High</demand>
+    </skill>
+    <skill>
+        <id>11</id>
+        <name>Java &amp; Data Structures Tutoring</name>
+        <category>Content &amp; Tutoring</category>
+        <experience>Teaching Assistant / 2 Years</experience>
+        <demand>Medium</demand>
+    </skill>
+    <skill>
+        <id>12</id>
+        <name>Pitch Deck &amp; Slide Infographics</name>
+        <category>Content &amp; Tutoring</category>
+        <experience>Business Club Lead / 2 Years</experience>
+        <demand>Medium</demand>
+    </skill>
+</skills>
