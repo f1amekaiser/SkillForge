@@ -125,6 +125,14 @@ mvn clean package
 ```
 This generates `target/SkillForge.war`.
 
+Before starting Tomcat, set the database environment variables. In PowerShell:
+
+```powershell
+$env:DB_URL = "jdbc:mysql://localhost:3306/skillforge_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8"
+$env:DB_USER = "root"
+$env:DB_PASSWORD = "root"
+```
+
 ### Step 3: Deploy to Tomcat 11
 Copy the generated WAR to Tomcat's `webapps` directory:
 ```powershell
@@ -139,6 +147,28 @@ Or start the Windows service: `Start-Service Tomcat11`
 
 ### Step 5: Open Application
 Navigate to: **`http://localhost:8080/SkillForge/`**
+
+### Deploy on Render
+
+The repository includes a `Dockerfile` and `render.yaml` for deploying the application
+as a Tomcat web service on Render.
+
+1. Push this repository to GitHub.
+2. Create a free MySQL-compatible database with a provider that allows external
+   connections, then import `database/skillforge.sql`.
+3. In Render, select **New &rarr; Blueprint** and connect the GitHub repository.
+4. Set the following environment variables for the `skillforge` service:
+
+   ```text
+   DB_URL=jdbc:mysql://<host>:<port>/<database>?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
+   DB_USER=<database-user>
+   DB_PASSWORD=<database-password>
+   ```
+
+5. Deploy the service. Render builds the WAR with Maven and runs it on Tomcat 11.
+
+The database must be hosted separately because Render's free web service does not
+provide a free MySQL database. Never commit database credentials to the repository.
 
 ---
 

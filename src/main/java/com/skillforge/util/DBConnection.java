@@ -9,9 +9,9 @@ import java.sql.SQLException;
  * Manages JDBC connections to MySQL database.
  */
 public class DBConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/skillforge_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String URL = requiredEnvironmentVariable("DB_URL");
+    private static final String USER = requiredEnvironmentVariable("DB_USER");
+    private static final String PASSWORD = requiredEnvironmentVariable("DB_PASSWORD");
 
     static {
         try {
@@ -23,6 +23,14 @@ public class DBConnection {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    private static String requiredEnvironmentVariable(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException("Required environment variable is not set: " + name);
+        }
+        return value;
     }
 
     public static void close(AutoCloseable... resources) {
