@@ -4,9 +4,7 @@
 -- Student-Focused Freelancing & Service Marketplace
 -- ====================================================================
 
-DROP DATABASE IF EXISTS skillforge_db;
-CREATE DATABASE skillforge_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE skillforge_db;
+USE defaultdb;
 
 -- --------------------------------------------------------------------
 -- Table: users

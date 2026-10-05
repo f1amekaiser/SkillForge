@@ -36,3 +36,5 @@ application-local.yaml
 *.sql.gz
 *.dump
 *.bak
+
+seed.py
