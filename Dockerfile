@@ -14,4 +14,7 @@ COPY --from=build /app/target/SkillForge.war /usr/local/tomcat/webapps/ROOT.war
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["sh", "-c", "sed -i \"s/port=\\\"8080\\\"/port=\\\"${PORT}\\\"/\" \"$CATALINA_HOME/conf/server.xml\" && catalina.sh run"]
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
