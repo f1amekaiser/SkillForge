@@ -10,7 +10,8 @@ import java.util.List;
 public class WishlistDAO {
 
     public boolean addToWishlist(int clientId, int serviceId) {
-        String sql = "INSERT IGNORE INTO wishlist (client_id, service_id) VALUES (?, ?)";
+        String sql = "INSERT INTO skillforge_wishlist (client_id, service_id) VALUES (?, ?) " +
+                     "ON CONFLICT (client_id, service_id) DO NOTHING";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, clientId);
@@ -23,7 +24,7 @@ public class WishlistDAO {
     }
 
     public boolean removeFromWishlist(int clientId, int serviceId) {
-        String sql = "DELETE FROM wishlist WHERE client_id = ? AND service_id = ?";
+        String sql = "DELETE FROM skillforge_wishlist WHERE client_id = ? AND service_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, clientId);
@@ -46,7 +47,7 @@ public class WishlistDAO {
     }
 
     public boolean isInWishlist(int clientId, int serviceId) {
-        String sql = "SELECT 1 FROM wishlist WHERE client_id = ? AND service_id = ?";
+        String sql = "SELECT 1 FROM skillforge_wishlist WHERE client_id = ? AND service_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, clientId);
@@ -64,10 +65,10 @@ public class WishlistDAO {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT s.*, u.name AS freelancer_name, u.username AS freelancer_username, " +
                      "u.profile_image AS freelancer_image, c.name AS category_name " +
-                     "FROM wishlist w " +
-                     "JOIN services s ON w.service_id = s.id " +
-                     "JOIN users u ON s.freelancer_id = u.id " +
-                     "JOIN categories c ON s.category_id = c.id " +
+                     "FROM skillforge_wishlist w " +
+                     "JOIN skillforge_services s ON w.service_id = s.id " +
+                     "JOIN skillforge_users u ON s.freelancer_id = u.id " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id " +
                      "WHERE w.client_id = ? ORDER BY w.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -102,7 +103,7 @@ public class WishlistDAO {
     }
 
     public int getWishlistCount(int clientId) {
-        String sql = "SELECT COUNT(*) FROM wishlist WHERE client_id = ?";
+        String sql = "SELECT COUNT(*) FROM skillforge_wishlist WHERE client_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, clientId);

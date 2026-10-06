@@ -10,7 +10,7 @@ import java.util.*;
 public class UserDAO {
 
     public User authenticate(String usernameOrEmail, String passwordHash) {
-        String sql = "SELECT * FROM users WHERE (username = ? OR email = ?) AND password_hash = ? AND status = 'ACTIVE'";
+        String sql = "SELECT * FROM skillforge_users WHERE (username = ? OR email = ?) AND password_hash = ? AND status = 'ACTIVE'";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, usernameOrEmail);
@@ -29,7 +29,7 @@ public class UserDAO {
     }
 
     public User findById(int id) {
-        String sql = "SELECT * FROM users WHERE id = ?";
+        String sql = "SELECT * FROM skillforge_users WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -49,7 +49,7 @@ public class UserDAO {
     }
 
     public User findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT * FROM skillforge_users WHERE username = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -69,7 +69,7 @@ public class UserDAO {
     }
 
     public boolean existsByUsername(String username) {
-        String sql = "SELECT 1 FROM users WHERE LOWER(username) = LOWER(?)";
+        String sql = "SELECT 1 FROM skillforge_users WHERE LOWER(username) = LOWER(?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username.trim());
@@ -83,7 +83,7 @@ public class UserDAO {
     }
 
     public boolean existsByEmail(String email) {
-        String sql = "SELECT 1 FROM users WHERE LOWER(email) = LOWER(?)";
+        String sql = "SELECT 1 FROM skillforge_users WHERE LOWER(email) = LOWER(?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email.trim());
@@ -97,7 +97,7 @@ public class UserDAO {
     }
 
     public boolean register(User user) {
-        String sql = "INSERT INTO users (name, username, email, password_hash, role, bio, profile_image, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'ACTIVE')";
+        String sql = "INSERT INTO skillforge_users (name, username, email, password_hash, role, bio, profile_image, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'ACTIVE')";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getName());
@@ -124,7 +124,7 @@ public class UserDAO {
     }
 
     public boolean updateProfile(User user) {
-        String sql = "UPDATE users SET name = ?, bio = ?, profile_image = ? WHERE id = ?";
+        String sql = "UPDATE skillforge_users SET name = ?, bio = ?, profile_image = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getName());
@@ -139,7 +139,7 @@ public class UserDAO {
     }
 
     public boolean updateStatus(int userId, String status) {
-        String sql = "UPDATE users SET status = ? WHERE id = ?";
+        String sql = "UPDATE skillforge_users SET status = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
@@ -153,7 +153,7 @@ public class UserDAO {
 
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT * FROM users ORDER BY id DESC";
+        String sql = "SELECT * FROM skillforge_users ORDER BY id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -168,7 +168,7 @@ public class UserDAO {
 
     public List<User> getUsersByRole(String role) {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE role = ? ORDER BY id DESC";
+        String sql = "SELECT * FROM skillforge_users WHERE role = ? ORDER BY id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, role);
@@ -190,9 +190,9 @@ public class UserDAO {
     public List<Skill> getFreelancerSkills(int userId) {
         List<Skill> list = new ArrayList<>();
         String sql = "SELECT s.id, s.name, s.category_id, c.name AS category_name " +
-                     "FROM skills s " +
-                     "JOIN user_skills us ON s.id = us.skill_id " +
-                     "JOIN categories c ON s.category_id = c.id " +
+                     "FROM skillforge_skills s " +
+                     "JOIN skillforge_user_skills us ON s.id = us.skill_id " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id " +
                      "WHERE us.user_id = ? ORDER BY s.name ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -214,8 +214,8 @@ public class UserDAO {
     }
 
     public boolean updateFreelancerSkills(int userId, List<Integer> skillIds) {
-        String deleteSql = "DELETE FROM user_skills WHERE user_id = ?";
-        String insertSql = "INSERT INTO user_skills (user_id, skill_id) VALUES (?, ?)";
+        String deleteSql = "DELETE FROM skillforge_user_skills WHERE user_id = ?";
+        String insertSql = "INSERT INTO skillforge_user_skills (user_id, skill_id) VALUES (?, ?)";
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();

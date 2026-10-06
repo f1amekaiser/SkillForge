@@ -20,4 +20,6 @@ sed -i 's|directory="logs"|directory="/dev"|; s|prefix="localhost_access_log"|pr
 
 echo "Tomcat configured for HTTP port ${PORT}"
 
+export CATALINA_OPTS="$CATALINA_OPTS -Djava.net.preferIPv4Stack=true"
+
 exec catalina.sh run

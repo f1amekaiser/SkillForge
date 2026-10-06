@@ -3,7 +3,7 @@
 
 A student-focused freelancing and service marketplace where university students offer digital services (web development, UI/UX, AI pipelines, video editing, tutoring) and clients can discover, hire, pay, and review them.
 
-Developed as a comprehensive Web Technology academic project demonstrating Java Servlets, JSP, JDBC, MySQL, Cookies, Sessions, AJAX, XML DOM parsing, and Role-Based Access Control (RBAC).
+Developed as a comprehensive Web Technology academic project demonstrating Java Servlets, JSP, JDBC, PostgreSQL, Cookies, Sessions, AJAX, XML DOM parsing, and Role-Based Access Control (RBAC).
 
 ---
 
@@ -47,8 +47,8 @@ University students develop industry-relevant skills in software engineering, UI
 | **Frontend** | HTML5, CSS3, Vanilla JavaScript | Responsive modern SaaS design system, CSS variables, cards, modals, toast alerts. No Tailwind CSS. |
 | **Backend** | Java Servlets (Jakarta EE 6.0) | Controller layer with `doGet()` and `doPost()` routing, input validation, and session handling. |
 | **View Engine** | JSP (Jakarta Server Pages 3.1) | Dynamic server-side rendering strictly adhering to MVC principles (no embedded SQL). |
-| **Database** | MySQL 8.0 | Relational database with 9 normalized tables, foreign keys, and indexes. |
-| **Connectivity** | JDBC (MySQL Connector/J) | Parameterized `PreparedStatement` queries and connection lifecycle management. |
+| **Database** | PostgreSQL (Neon) | Relational database with 9 normalized tables, foreign keys, and indexes. |
+| **Connectivity** | JDBC (PostgreSQL driver) | Parameterized `PreparedStatement` queries and connection lifecycle management. |
 | **Asynchronous** | AJAX (Fetch API / XMLHttpRequest) | Live search, username check, wishlist toggle, pre-checkout availability, and XML table parsing. |
 | **Data Interchange** | XML (`skills.xml`) &amp; JSON | Demonstration of asynchronous XML document retrieval and client-side DOM parsing. |
 | **Server** | Apache Tomcat 11.0 | Jakarta EE compliant servlet container. |
@@ -83,7 +83,7 @@ SkillForge follows a strict **Model-View-Controller (MVC)** with **Data Access O
                                v  |
 +-------------------------------------------------------------+
 |                      Database Layer                         |
-|                     (MySQL 8.0 Server)                      |
+|                    (PostgreSQL / Neon)                      |
 +-------------------------------------------------------------+
 ```
 
@@ -91,16 +91,16 @@ SkillForge follows a strict **Model-View-Controller (MVC)** with **Data Access O
 
 ## 5. Database Schema & Tables
 
-The database `skillforge_db` contains 9 tables:
-1. `users` (id, name, username, email, password_hash, role, profile_image, bio, status, created_at)
-2. `categories` (id, name, description, icon, created_at)
-3. `skills` (id, name, category_id, created_at)
-4. `user_skills` (user_id, skill_id)
-5. `services` (id, freelancer_id, category_id, title, description, price, delivery_days, rating, review_count, status, created_at)
-6. `orders` (id, client_id, freelancer_id, service_id, amount, status, requirements, delivery_message, created_at, completed_at)
-7. `payments` (id, order_id, amount, payment_method, transaction_id, status, payment_date)
-8. `reviews` (id, order_id, client_id, freelancer_id, rating, comment, created_at)
-9. `wishlist` (id, client_id, service_id, created_at)
+The PostgreSQL database contains 9 project-specific tables:
+1. `skillforge_users` (id, name, username, email, password_hash, role, profile_image, bio, status, created_at)
+2. `skillforge_categories` (id, name, description, icon, created_at)
+3. `skillforge_skills` (id, name, category_id, created_at)
+4. `skillforge_user_skills` (user_id, skill_id)
+5. `skillforge_services` (id, freelancer_id, category_id, title, description, price, delivery_days, rating, review_count, status, created_at)
+6. `skillforge_orders` (id, client_id, freelancer_id, service_id, amount, status, requirements, delivery_message, created_at, completed_at)
+7. `skillforge_payments` (id, order_id, amount, payment_method, transaction_id, status, payment_date)
+8. `skillforge_reviews` (id, order_id, client_id, freelancer_id, rating, comment, created_at)
+9. `skillforge_wishlist` (id, client_id, service_id, created_at)
 
 ---
 
@@ -109,13 +109,13 @@ The database `skillforge_db` contains 9 tables:
 ### Prerequisites:
 - Java JDK 21+
 - Apache Maven 3.9+
-- MySQL Server 8.0
+- PostgreSQL database (Neon recommended)
 - Apache Tomcat 11.0
 
 ### Step 1: Database Setup
 Import the complete SQL script:
 ```bash
-mysql -u root -proot < database/skillforge.sql
+psql "<your-neon-connection-string>" -f database/skillforge.sql
 ```
 
 ### Step 2: Build Application with Maven
@@ -128,9 +128,9 @@ This generates `target/SkillForge.war`.
 Before starting Tomcat, set the database environment variables. In PowerShell:
 
 ```powershell
-$env:DB_URL = "jdbc:mysql://localhost:3306/skillforge_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8"
-$env:DB_USER = "root"
-$env:DB_PASSWORD = "root"
+$env:DB_URL = "jdbc:postgresql://<neon-host>/<neon-database>?sslmode=require"
+$env:DB_USER = "<neon-user>"
+$env:DB_PASSWORD = "<neon-password>"
 ```
 
 ### Step 3: Deploy to Tomcat 11
@@ -154,13 +154,12 @@ The repository includes a `Dockerfile` and `render.yaml` for deploying the appli
 as a Tomcat web service on Render.
 
 1. Push this repository to GitHub.
-2. Create a free MySQL-compatible database with a provider that allows external
-   connections, then import `database/skillforge.sql`.
+2. Create a Neon PostgreSQL database, then import `database/skillforge.sql`.
 3. In Render, select **New &rarr; Blueprint** and connect the GitHub repository.
 4. Set the following environment variables for the `skillforge` service:
 
    ```text
-   DB_URL=jdbc:mysql://<host>:<port>/<database>?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
+   DB_URL=jdbc:postgresql://<neon-host>/<neon-database>?sslmode=require
    DB_USER=<database-user>
    DB_PASSWORD=<database-password>
    ```
@@ -168,7 +167,7 @@ as a Tomcat web service on Render.
 5. Deploy the service. Render builds the WAR with Maven and runs it on Tomcat 11.
 
 The database must be hosted separately because Render's free web service does not
-provide a free MySQL database. Never commit database credentials to the repository.
+provide a managed PostgreSQL database. Never commit database credentials to the repository.
 The container uses Render's automatically provided `PORT` value, binds Tomcat to
 `0.0.0.0`, disables Tomcat's shutdown listener, and defaults to port `8080` when
 run locally. Render's default port is advertised as `10000`.

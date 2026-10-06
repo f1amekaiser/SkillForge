@@ -10,7 +10,7 @@ import java.util.List;
 public class ReviewDAO {
 
     public boolean addReview(Review review) {
-        String sql = "INSERT INTO reviews (order_id, client_id, freelancer_id, rating, comment) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO skillforge_reviews (order_id, client_id, freelancer_id, rating, comment) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, review.getOrderId());
@@ -44,11 +44,11 @@ public class ReviewDAO {
         List<Review> list = new ArrayList<>();
         String sql = "SELECT r.*, c.name AS client_name, c.profile_image AS client_image, " +
                      "f.name AS freelancer_name, s.title AS service_title " +
-                     "FROM reviews r " +
-                     "JOIN users c ON r.client_id = c.id " +
-                     "JOIN users f ON r.freelancer_id = f.id " +
-                     "JOIN orders o ON r.order_id = o.id " +
-                     "JOIN services s ON o.service_id = s.id " +
+                     "FROM skillforge_reviews r " +
+                     "JOIN skillforge_users c ON r.client_id = c.id " +
+                     "JOIN skillforge_users f ON r.freelancer_id = f.id " +
+                     "JOIN skillforge_orders o ON r.order_id = o.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
                      "WHERE r.freelancer_id = ? ORDER BY r.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -68,11 +68,11 @@ public class ReviewDAO {
         List<Review> list = new ArrayList<>();
         String sql = "SELECT r.*, c.name AS client_name, c.profile_image AS client_image, " +
                      "f.name AS freelancer_name, s.title AS service_title " +
-                     "FROM reviews r " +
-                     "JOIN users c ON r.client_id = c.id " +
-                     "JOIN users f ON r.freelancer_id = f.id " +
-                     "JOIN orders o ON r.order_id = o.id " +
-                     "JOIN services s ON o.service_id = s.id " +
+                     "FROM skillforge_reviews r " +
+                     "JOIN skillforge_users c ON r.client_id = c.id " +
+                     "JOIN skillforge_users f ON r.freelancer_id = f.id " +
+                     "JOIN skillforge_orders o ON r.order_id = o.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
                      "WHERE s.id = ? ORDER BY r.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -91,11 +91,11 @@ public class ReviewDAO {
     public Review getReviewByOrderId(int orderId) {
         String sql = "SELECT r.*, c.name AS client_name, c.profile_image AS client_image, " +
                      "f.name AS freelancer_name, s.title AS service_title " +
-                     "FROM reviews r " +
-                     "JOIN users c ON r.client_id = c.id " +
-                     "JOIN users f ON r.freelancer_id = f.id " +
-                     "JOIN orders o ON r.order_id = o.id " +
-                     "JOIN services s ON o.service_id = s.id " +
+                     "FROM skillforge_reviews r " +
+                     "JOIN skillforge_users c ON r.client_id = c.id " +
+                     "JOIN skillforge_users f ON r.freelancer_id = f.id " +
+                     "JOIN skillforge_orders o ON r.order_id = o.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
                      "WHERE r.order_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -112,7 +112,7 @@ public class ReviewDAO {
     }
 
     public boolean hasClientReviewedOrder(int orderId, int clientId) {
-        String sql = "SELECT 1 FROM reviews WHERE order_id = ? AND client_id = ?";
+        String sql = "SELECT 1 FROM skillforge_reviews WHERE order_id = ? AND client_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, orderId);

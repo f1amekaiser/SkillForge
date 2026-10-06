@@ -11,7 +11,7 @@ import java.util.List;
 public class PaymentDAO {
 
     public boolean recordPayment(Payment payment) {
-        String sql = "INSERT INTO payments (order_id, amount, payment_method, transaction_id, status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO skillforge_payments (order_id, amount, payment_method, transaction_id, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, payment.getOrderId());
@@ -35,10 +35,10 @@ public class PaymentDAO {
 
     public Payment getByOrderId(int orderId) {
         String sql = "SELECT p.*, c.name AS client_name, s.title AS service_title " +
-                     "FROM payments p " +
-                     "JOIN orders o ON p.order_id = o.id " +
-                     "JOIN users c ON o.client_id = c.id " +
-                     "JOIN services s ON o.service_id = s.id " +
+                     "FROM skillforge_payments p " +
+                     "JOIN skillforge_orders o ON p.order_id = o.id " +
+                     "JOIN skillforge_users c ON o.client_id = c.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
                      "WHERE p.order_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -57,10 +57,10 @@ public class PaymentDAO {
     public List<Payment> getAllPayments() {
         List<Payment> list = new ArrayList<>();
         String sql = "SELECT p.*, c.name AS client_name, s.title AS service_title " +
-                     "FROM payments p " +
-                     "JOIN orders o ON p.order_id = o.id " +
-                     "JOIN users c ON o.client_id = c.id " +
-                     "JOIN services s ON o.service_id = s.id " +
+                     "FROM skillforge_payments p " +
+                     "JOIN skillforge_orders o ON p.order_id = o.id " +
+                     "JOIN skillforge_users c ON o.client_id = c.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
                      "ORDER BY p.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -75,7 +75,7 @@ public class PaymentDAO {
     }
 
     public BigDecimal getTotalRevenue() {
-        String sql = "SELECT COALESCE(SUM(amount), 0.0) FROM payments WHERE status = 'COMPLETED'";
+        String sql = "SELECT COALESCE(SUM(amount), 0.0) FROM skillforge_payments WHERE status = 'COMPLETED'";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

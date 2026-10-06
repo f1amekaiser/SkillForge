@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 /**
  * Database Connection Utility for SkillForge
- * Manages JDBC connections to MySQL database.
+ * Manages JDBC connections to PostgreSQL.
  */
 public class DBConnection {
     private static final String URL = requiredEnvironmentVariable("DB_URL");
@@ -15,9 +15,9 @@ public class DBConnection {
 
     static {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            System.err.println("MySQL JDBC Driver not found: " + e.getMessage());
+            System.err.println("PostgreSQL JDBC Driver not found: " + e.getMessage());
         }
     }
 

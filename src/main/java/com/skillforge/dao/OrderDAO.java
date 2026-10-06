@@ -10,7 +10,7 @@ import java.util.*;
 public class OrderDAO {
 
     public int createOrder(Order order) {
-        String sql = "INSERT INTO orders (client_id, freelancer_id, service_id, amount, status, requirements) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO skillforge_orders (client_id, freelancer_id, service_id, amount, status, requirements) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, order.getClientId());
@@ -41,12 +41,12 @@ public class OrderDAO {
                      "f.name AS freelancer_name, f.email AS freelancer_email, " +
                      "s.title AS service_title, " +
                      "p.payment_method, p.transaction_id, " +
-                     "(SELECT COUNT(*) FROM reviews r WHERE r.order_id = o.id) AS is_reviewed " +
-                     "FROM orders o " +
-                     "JOIN users c ON o.client_id = c.id " +
-                     "JOIN users f ON o.freelancer_id = f.id " +
-                     "JOIN services s ON o.service_id = s.id " +
-                     "LEFT JOIN payments p ON o.id = p.order_id " +
+                     "(SELECT COUNT(*) FROM skillforge_reviews r WHERE r.order_id = o.id) AS is_reviewed " +
+                     "FROM skillforge_orders o " +
+                     "JOIN skillforge_users c ON o.client_id = c.id " +
+                     "JOIN skillforge_users f ON o.freelancer_id = f.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
+                     "LEFT JOIN skillforge_payments p ON o.id = p.order_id " +
                      "WHERE o.id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -68,12 +68,12 @@ public class OrderDAO {
                      "f.name AS freelancer_name, f.email AS freelancer_email, " +
                      "s.title AS service_title, " +
                      "p.payment_method, p.transaction_id, " +
-                     "(SELECT COUNT(*) FROM reviews r WHERE r.order_id = o.id) AS is_reviewed " +
-                     "FROM orders o " +
-                     "JOIN users c ON o.client_id = c.id " +
-                     "JOIN users f ON o.freelancer_id = f.id " +
-                     "JOIN services s ON o.service_id = s.id " +
-                     "LEFT JOIN payments p ON o.id = p.order_id " +
+                     "(SELECT COUNT(*) FROM skillforge_reviews r WHERE r.order_id = o.id) AS is_reviewed " +
+                     "FROM skillforge_orders o " +
+                     "JOIN skillforge_users c ON o.client_id = c.id " +
+                     "JOIN skillforge_users f ON o.freelancer_id = f.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
+                     "LEFT JOIN skillforge_payments p ON o.id = p.order_id " +
                      "WHERE o.client_id = ? ORDER BY o.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -95,12 +95,12 @@ public class OrderDAO {
                      "f.name AS freelancer_name, f.email AS freelancer_email, " +
                      "s.title AS service_title, " +
                      "p.payment_method, p.transaction_id, " +
-                     "(SELECT COUNT(*) FROM reviews r WHERE r.order_id = o.id) AS is_reviewed " +
-                     "FROM orders o " +
-                     "JOIN users c ON o.client_id = c.id " +
-                     "JOIN users f ON o.freelancer_id = f.id " +
-                     "JOIN services s ON o.service_id = s.id " +
-                     "LEFT JOIN payments p ON o.id = p.order_id " +
+                     "(SELECT COUNT(*) FROM skillforge_reviews r WHERE r.order_id = o.id) AS is_reviewed " +
+                     "FROM skillforge_orders o " +
+                     "JOIN skillforge_users c ON o.client_id = c.id " +
+                     "JOIN skillforge_users f ON o.freelancer_id = f.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
+                     "LEFT JOIN skillforge_payments p ON o.id = p.order_id " +
                      "WHERE o.freelancer_id = ? ORDER BY o.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -122,12 +122,12 @@ public class OrderDAO {
                      "f.name AS freelancer_name, f.email AS freelancer_email, " +
                      "s.title AS service_title, " +
                      "p.payment_method, p.transaction_id, " +
-                     "(SELECT COUNT(*) FROM reviews r WHERE r.order_id = o.id) AS is_reviewed " +
-                     "FROM orders o " +
-                     "JOIN users c ON o.client_id = c.id " +
-                     "JOIN users f ON o.freelancer_id = f.id " +
-                     "JOIN services s ON o.service_id = s.id " +
-                     "LEFT JOIN payments p ON o.id = p.order_id " +
+                     "(SELECT COUNT(*) FROM skillforge_reviews r WHERE r.order_id = o.id) AS is_reviewed " +
+                     "FROM skillforge_orders o " +
+                     "JOIN skillforge_users c ON o.client_id = c.id " +
+                     "JOIN skillforge_users f ON o.freelancer_id = f.id " +
+                     "JOIN skillforge_services s ON o.service_id = s.id " +
+                     "LEFT JOIN skillforge_payments p ON o.id = p.order_id " +
                      "ORDER BY o.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -144,9 +144,9 @@ public class OrderDAO {
     public boolean updateOrderStatus(int orderId, String status) {
         String sql;
         if ("COMPLETED".equalsIgnoreCase(status)) {
-            sql = "UPDATE orders SET status = ?, completed_at = CURRENT_TIMESTAMP WHERE id = ?";
+            sql = "UPDATE skillforge_orders SET status = ?, completed_at = CURRENT_TIMESTAMP WHERE id = ?";
         } else {
-            sql = "UPDATE orders SET status = ? WHERE id = ?";
+            sql = "UPDATE skillforge_orders SET status = ? WHERE id = ?";
         }
 
         try (Connection conn = DBConnection.getConnection();
@@ -161,7 +161,7 @@ public class OrderDAO {
     }
 
     public boolean deliverOrder(int orderId, String deliveryMessage) {
-        String sql = "UPDATE orders SET status = 'DELIVERED', delivery_message = ? WHERE id = ?";
+        String sql = "UPDATE skillforge_orders SET status = 'DELIVERED', delivery_message = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, deliveryMessage);
@@ -180,8 +180,8 @@ public class OrderDAO {
                      "COALESCE(SUM(CASE WHEN status IN ('ACCEPTED', 'IN_PROGRESS', 'DELIVERED') THEN 1 ELSE 0 END), 0) AS active_orders, " +
                      "COALESCE(SUM(CASE WHEN status = 'COMPLETED' THEN 1 ELSE 0 END), 0) AS completed_orders, " +
                      "COALESCE(SUM(CASE WHEN status = 'COMPLETED' THEN amount ELSE 0 END), 0.0) AS total_earnings, " +
-                     "(SELECT COALESCE(AVG(rating), 5.0) FROM reviews WHERE freelancer_id = ?) AS avg_rating " +
-                     "FROM orders WHERE freelancer_id = ?";
+                     "(SELECT COALESCE(AVG(rating), 5.0) FROM skillforge_reviews WHERE freelancer_id = ?) AS avg_rating " +
+                     "FROM skillforge_orders WHERE freelancer_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, freelancerId);
@@ -208,7 +208,7 @@ public class OrderDAO {
                      "COALESCE(SUM(CASE WHEN status IN ('PENDING', 'ACCEPTED', 'IN_PROGRESS', 'DELIVERED') THEN 1 ELSE 0 END), 0) AS active_orders, " +
                      "COALESCE(SUM(CASE WHEN status = 'COMPLETED' THEN 1 ELSE 0 END), 0) AS completed_orders, " +
                      "COALESCE(SUM(amount), 0.0) AS total_spent " +
-                     "FROM orders WHERE client_id = ?";
+                     "FROM skillforge_orders WHERE client_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, clientId);
@@ -229,12 +229,12 @@ public class OrderDAO {
     public Map<String, Object> getAdminStats() {
         Map<String, Object> stats = new HashMap<>();
         String sql = "SELECT " +
-                     "(SELECT COUNT(*) FROM users) AS total_users, " +
-                     "(SELECT COUNT(*) FROM users WHERE role = 'FREELANCER') AS total_freelancers, " +
-                     "(SELECT COUNT(*) FROM users WHERE role = 'CLIENT') AS total_clients, " +
-                     "(SELECT COUNT(*) FROM services WHERE status = 'ACTIVE') AS total_services, " +
-                     "(SELECT COUNT(*) FROM orders) AS total_orders, " +
-                     "(SELECT COALESCE(SUM(amount), 0.0) FROM payments WHERE status = 'COMPLETED') AS total_revenue";
+                     "(SELECT COUNT(*) FROM skillforge_users) AS total_users, " +
+                     "(SELECT COUNT(*) FROM skillforge_users WHERE role = 'FREELANCER') AS total_freelancers, " +
+                     "(SELECT COUNT(*) FROM skillforge_users WHERE role = 'CLIENT') AS total_clients, " +
+                     "(SELECT COUNT(*) FROM skillforge_services WHERE status = 'ACTIVE') AS total_services, " +
+                     "(SELECT COUNT(*) FROM skillforge_orders) AS total_orders, " +
+                     "(SELECT COALESCE(SUM(amount), 0.0) FROM skillforge_payments WHERE status = 'COMPLETED') AS total_revenue";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

@@ -14,9 +14,9 @@ public class ServiceDAO {
     public Service getById(int id) {
         String sql = "SELECT s.*, u.name AS freelancer_name, u.username AS freelancer_username, " +
                      "u.profile_image AS freelancer_image, c.name AS category_name " +
-                     "FROM services s " +
-                     "JOIN users u ON s.freelancer_id = u.id " +
-                     "JOIN categories c ON s.category_id = c.id " +
+                     "FROM skillforge_services s " +
+                     "JOIN skillforge_users u ON s.freelancer_id = u.id " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id " +
                      "WHERE s.id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -43,11 +43,11 @@ public class ServiceDAO {
                      "u.profile_image AS freelancer_image, c.name AS category_name " +
                      "FROM (" +
                      "    SELECT *, ROW_NUMBER() OVER (PARTITION BY freelancer_id ORDER BY rating DESC, review_count DESC, id DESC) as rn " +
-                     "    FROM services " +
+                     "    FROM skillforge_services " +
                      "    WHERE status = 'ACTIVE'" +
                      ") s " +
-                     "JOIN users u ON s.freelancer_id = u.id " +
-                     "JOIN categories c ON s.category_id = c.id " +
+                     "JOIN skillforge_users u ON s.freelancer_id = u.id " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id " +
                      "WHERE s.rn = 1 AND u.status = 'ACTIVE' AND u.role = 'FREELANCER' " +
                      "ORDER BY s.rating DESC, s.review_count DESC, s.id DESC LIMIT ?";
         try (Connection conn = DBConnection.getConnection();
@@ -71,9 +71,9 @@ public class ServiceDAO {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT s.*, u.name AS freelancer_name, u.username AS freelancer_username, " +
                      "u.profile_image AS freelancer_image, c.name AS category_name " +
-                     "FROM services s " +
-                     "JOIN users u ON s.freelancer_id = u.id " +
-                     "JOIN categories c ON s.category_id = c.id " +
+                     "FROM skillforge_services s " +
+                     "JOIN skillforge_users u ON s.freelancer_id = u.id " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id " +
                      "WHERE s.freelancer_id = ? AND s.status != 'REMOVED' " +
                      "ORDER BY s.id DESC";
         try (Connection conn = DBConnection.getConnection();
@@ -94,9 +94,9 @@ public class ServiceDAO {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT s.*, u.name AS freelancer_name, u.username AS freelancer_username, " +
                      "u.profile_image AS freelancer_image, c.name AS category_name " +
-                     "FROM services s " +
-                     "JOIN users u ON s.freelancer_id = u.id " +
-                     "JOIN categories c ON s.category_id = c.id " +
+                     "FROM skillforge_services s " +
+                     "JOIN skillforge_users u ON s.freelancer_id = u.id " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id " +
                      "ORDER BY s.id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -118,9 +118,9 @@ public class ServiceDAO {
         StringBuilder sql = new StringBuilder(
             "SELECT s.*, u.name AS freelancer_name, u.username AS freelancer_username, " +
             "u.profile_image AS freelancer_image, c.name AS category_name " +
-            "FROM services s " +
-            "JOIN users u ON s.freelancer_id = u.id " +
-            "JOIN categories c ON s.category_id = c.id " +
+            "FROM skillforge_services s " +
+            "JOIN skillforge_users u ON s.freelancer_id = u.id " +
+            "JOIN skillforge_categories c ON s.category_id = c.id " +
             "WHERE s.status = 'ACTIVE' AND u.status = 'ACTIVE' "
         );
 
@@ -195,7 +195,7 @@ public class ServiceDAO {
     }
 
     public boolean createService(Service service) {
-        String sql = "INSERT INTO services (freelancer_id, category_id, title, description, price, delivery_days, status) VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE')";
+        String sql = "INSERT INTO skillforge_services (freelancer_id, category_id, title, description, price, delivery_days, status) VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE')";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, service.getFreelancerId());
@@ -219,7 +219,7 @@ public class ServiceDAO {
     }
 
     public boolean updateService(Service service) {
-        String sql = "UPDATE services SET category_id = ?, title = ?, description = ?, price = ?, delivery_days = ?, status = ? WHERE id = ? AND freelancer_id = ?";
+        String sql = "UPDATE skillforge_services SET category_id = ?, title = ?, description = ?, price = ?, delivery_days = ?, status = ? WHERE id = ? AND freelancer_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, service.getCategoryId());
@@ -238,7 +238,7 @@ public class ServiceDAO {
     }
 
     public boolean deleteService(int id) {
-        String sql = "UPDATE services SET status = 'REMOVED' WHERE id = ?";
+        String sql = "UPDATE skillforge_services SET status = 'REMOVED' WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -250,9 +250,9 @@ public class ServiceDAO {
     }
 
     public boolean updateRatingAndReviewCount(int serviceId) {
-        String sql = "UPDATE services s " +
-                     "SET s.rating = COALESCE((SELECT AVG(r.rating) FROM reviews r JOIN orders o ON r.order_id = o.id WHERE o.service_id = s.id), 0.0), " +
-                     "    s.review_count = COALESCE((SELECT COUNT(r.id) FROM reviews r JOIN orders o ON r.order_id = o.id WHERE o.service_id = s.id), 0) " +
+        String sql = "UPDATE skillforge_services s " +
+                     "SET s.rating = COALESCE((SELECT AVG(r.rating) FROM skillforge_reviews r JOIN skillforge_orders o ON r.order_id = o.id WHERE o.service_id = s.id), 0.0), " +
+                     "    s.review_count = COALESCE((SELECT COUNT(r.id) FROM skillforge_reviews r JOIN skillforge_orders o ON r.order_id = o.id WHERE o.service_id = s.id), 0) " +
                      "WHERE s.id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -265,7 +265,7 @@ public class ServiceDAO {
     }
 
     public int countServices() {
-        String sql = "SELECT COUNT(*) FROM services WHERE status = 'ACTIVE'";
+        String sql = "SELECT COUNT(*) FROM skillforge_services WHERE status = 'ACTIVE'";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

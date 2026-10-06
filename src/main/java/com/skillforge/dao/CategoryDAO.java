@@ -12,8 +12,8 @@ public class CategoryDAO {
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
         String sql = "SELECT c.*, COUNT(s.id) AS service_count " +
-                     "FROM categories c " +
-                     "LEFT JOIN services s ON c.id = s.category_id AND s.status = 'ACTIVE' " +
+                     "FROM skillforge_categories c " +
+                     "LEFT JOIN skillforge_services s ON c.id = s.category_id AND s.status = 'ACTIVE' " +
                      "GROUP BY c.id ORDER BY c.name ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -36,8 +36,8 @@ public class CategoryDAO {
 
     public Category getById(int id) {
         String sql = "SELECT c.*, COUNT(s.id) AS service_count " +
-                     "FROM categories c " +
-                     "LEFT JOIN services s ON c.id = s.category_id AND s.status = 'ACTIVE' " +
+                     "FROM skillforge_categories c " +
+                     "LEFT JOIN skillforge_services s ON c.id = s.category_id AND s.status = 'ACTIVE' " +
                      "WHERE c.id = ? GROUP BY c.id";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -61,7 +61,7 @@ public class CategoryDAO {
     }
 
     public boolean createCategory(Category category) {
-        String sql = "INSERT INTO categories (name, description, icon) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO skillforge_categories (name, description, icon) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, category.getName());
@@ -81,7 +81,7 @@ public class CategoryDAO {
     }
 
     public boolean updateCategory(Category category) {
-        String sql = "UPDATE categories SET name = ?, description = ?, icon = ? WHERE id = ?";
+        String sql = "UPDATE skillforge_categories SET name = ?, description = ?, icon = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, category.getName());
@@ -96,7 +96,7 @@ public class CategoryDAO {
     }
 
     public boolean deleteCategory(int id) {
-        String sql = "DELETE FROM categories WHERE id = ?";
+        String sql = "DELETE FROM skillforge_categories WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);

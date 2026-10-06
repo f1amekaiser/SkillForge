@@ -11,8 +11,8 @@ public class SkillDAO {
 
     public List<Skill> getAllSkills() {
         List<Skill> list = new ArrayList<>();
-        String sql = "SELECT s.*, c.name AS category_name FROM skills s " +
-                     "JOIN categories c ON s.category_id = c.id ORDER BY s.name ASC";
+        String sql = "SELECT s.*, c.name AS category_name FROM skillforge_skills s " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id ORDER BY s.name ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -33,8 +33,8 @@ public class SkillDAO {
 
     public List<Skill> getSkillsByCategoryId(int categoryId) {
         List<Skill> list = new ArrayList<>();
-        String sql = "SELECT s.*, c.name AS category_name FROM skills s " +
-                     "JOIN categories c ON s.category_id = c.id WHERE s.category_id = ? ORDER BY s.name ASC";
+        String sql = "SELECT s.*, c.name AS category_name FROM skillforge_skills s " +
+                     "JOIN skillforge_categories c ON s.category_id = c.id WHERE s.category_id = ? ORDER BY s.name ASC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, categoryId);
