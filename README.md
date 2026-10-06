@@ -113,9 +113,16 @@ The PostgreSQL database contains 9 project-specific tables:
 - Apache Tomcat 11.0
 
 ### Step 1: Database Setup
-Import the complete SQL script:
+Create the PostgreSQL tables and seed the default accounts:
 ```bash
-psql "<your-neon-connection-string>" -f database/skillforge.sql
+psql "<your-neon-connection-string>" -f database/schema-neon.sql
+psql "<your-neon-connection-string>" -f database/seed-neon.sql
+```
+
+For an existing schema, use only the repeatable seed-only script:
+
+```bash
+psql "<your-neon-connection-string>" -f database/seed-neon.sql
 ```
 
 ### Step 2: Build Application with Maven
