@@ -14,7 +14,8 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT
 COPY --from=build /app/target/SkillForge.war /usr/local/tomcat/webapps/ROOT.war
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
+ && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 10000
 
